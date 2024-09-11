@@ -1,3 +1,5 @@
+![FairBane](https://img.shields.io/website?down_message=FairBane%20Not%20Deployed%20%3A%28&up_message=FairBane&url=https%3A%2F%2Ffairbane.hyper.box)
+
 ![fb](https://github.com/user-attachments/assets/e9d66efa-9910-45af-a43e-05f6da3950da)
 # FairBane
 
@@ -5,7 +7,11 @@
 
 this repo demonstrates running core internet infra: ***rootca, geth, tlsnotary, pkarr***; but with a twist: once it's deployed it's secrets will never be revealed. It achieves this via intel's encrypted virtual memory extension: TDX.
 
-The domain FairBane will control: 
+> [!IMPORTANT]
+> This will be launched before devcon 2024 </br>
+> bootstrapped attestations will be posted here when it boots
+
+The DNS / ENS FairBane will control: 
 ```diff 
 +hyper.box
 ```
