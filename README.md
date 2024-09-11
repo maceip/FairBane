@@ -1,4 +1,4 @@
-# freekey
+# FairBane
 ### a service for hackers
 
 this repo demonstrates running core internet infra: (rootCA, Geth, Pkarr, Tlsnotary) but with a twist: once it's deployed it's secrets will never be revealed. It achieves this using intel's encrypted virtual memory extension: TDX.
