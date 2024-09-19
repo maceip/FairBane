@@ -15,7 +15,7 @@ jobs:
   build:
     permissions: write-all
     runs-on: ubuntu-latest
-    environment: tee
+    environment: TEE
     steps:
     - name: azure-tee-build-${{ github.sha }}
       uses: appleboy/ssh-action@v1.0.3
