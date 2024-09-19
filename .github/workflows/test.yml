@@ -36,10 +36,9 @@ jobs:
             export RAWQUOTE=AA
             curl -v -L -X PATCH -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $PAT_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$GITHUB_REPOSITORY/environments/TEE/variables/AZURE_TEE_BUILD_PORT -d '{"name":"AZURE_TEE_BUILD_PORT","value":"'$RAWQUOTE'"}'
             exit 0
-    - run: echo "${{ env.AZURE_TEE_BUILD_PORT }}"
-    - run: echo $env:AZURE_TEE_BUILD_PORT
+    - run: echo "${{ vars.AZURE_TEE_BUILD_PORT }}"
     - name: save quote from azure into env, write it to runner
-      run: echo "${{ env.AZURE_TEE_BUILD_PORT }}" > /home/runner/work/_temp/sgx-build-quote.txt
+      run: echo "${{ vars.AZURE_TEE_BUILD_PORT }}" > /home/runner/work/_temp/sgx-build-quote.txt
     - name: upload it
       uses: actions/upload-artifact@v4
       with:
