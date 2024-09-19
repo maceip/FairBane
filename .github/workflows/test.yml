@@ -20,7 +20,7 @@ jobs:
     - name: azure-tee-build-${{ github.sha }}
       uses: appleboy/ssh-action@v1.0.3
       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_SET_ENV }}
 
       with:
          host: ${{ secrets.AZURE_TEE_BUILD_HOST }}
@@ -29,9 +29,9 @@ jobs:
          port: ${{ secrets.SSH_PORT }}
          command_timeout: 10m
          allenvs: true
-         envs: GITHUB_TOKEN
+         envs: PAT_TOKEN
          script: |
-            EXPORT GITHUB_TOKEN=$GITHUB_TOKEN
+            EXPORT PAT_TOKEN=$PAT_TOKEN
             echo $GITHUB_TOKEN
             echo "NO"
             echo $GITHUB_REPOSITORY
@@ -43,8 +43,8 @@ jobs:
             source $HOME/.cargo/env
             export RAWQUOTE=AA
             echo ${{ secrets.GITHUB_TOKEN }}
-            curl -v -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$GITHUB_REPOSITORY/environments/TEE/variables/AZURE_TEE_BUILD_PORT
-            curl -v -L -X PATCH -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$GITHUB_REPOSITORY/environments/TEE/variables/AZURE_TEE_BUILD_PORT -d '{"name":"AZURE_TEE_BUILD_PORT","value":"ss"}'
+            curl -v -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $PAT_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$GITHUB_REPOSITORY/environments/TEE/variables/AZURE_TEE_BUILD_PORT
+            curl -v -L -X PATCH -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $PAT_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$GITHUB_REPOSITORY/environments/TEE/variables/AZURE_TEE_BUILD_PORT -d '{"name":"AZURE_TEE_BUILD_PORT","value":"ss"}'
             exit 0
     - run: echo "${{ env.AZURE_TEE_BUILD_PORT }}"
     - run: echo $env:AZURE_TEE_BUILD_PORT
