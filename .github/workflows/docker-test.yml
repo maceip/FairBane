@@ -35,18 +35,23 @@ jobs:
         username: notaryServerBuilds
         password: ${{ secrets.AZURE_CR_BUILDS_PW }}
     - name: Build and push Docker image
-      id: build-and-push
+      id: push
       uses: docker/build-push-action@v5.0.0        
       with:
         context: .
         platforms: linux/amd64,linux/arm64
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
         push: true
         tags: notaryserverbuilds.azurecr.io/sgx:latest
-
+    - name: Generate SBOM
+      uses: anchore/sbom-action@v0
+      with:
+        image: notaryserverbuilds.azurecr.io/sgx:latest
+        format: 'cyclonedx-json'
+        output-file: 'sbom.cyclonedx.json'
     - name: get github to sign our measurement
       uses: actions/attest-build-provenance@v1
       with:
         subject-name: notaryserverbuilds.azurecr.io/sgx/gramine7
+        subject-digest: ${{ steps.push.outputs.digest }}
+        sbom-path: 'sbom.cyclonedx.json'
         push-to-registry: true
