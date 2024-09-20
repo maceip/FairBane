@@ -16,6 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: tee
     steps:
+    - name: Build artifact
+      run: date > artifact.bin
+
+    - name: Build Dockerfile
+       run:|
+          cat <<EOF > Dockerfile
+          FROM scratch
+          COPY artifact.bin .
+          EOF
     - name: Setup qemu
       uses: docker/setup-qemu-action@v3
     - name: Set up Docker Buildx
