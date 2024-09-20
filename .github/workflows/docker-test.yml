@@ -1,4 +1,4 @@
-name: dtest
+]\name: dtest
 
 on:
   push:
@@ -18,7 +18,6 @@ jobs:
     steps:
     - name: Build artifact
       run: date > artifact.bin
-
     - name: Build Dockerfile
        run:|
           cat <<EOF > Dockerfile
