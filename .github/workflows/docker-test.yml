@@ -35,6 +35,8 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
         push: true
+        tags: notaryserverbuilds.azurecr.io/sgx:latest
+
     - name: get github to sign our measurement
       uses: actions/attest-build-provenance@v1
       with:
