@@ -35,7 +35,7 @@ jobs:
         context: .
         file: docker/base/gramine/Dockerfile
         tags: notaryserverbuilds.azurecr.io/sgx/gramine7:latest
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64
         push: true
     - name: Generate SBOM
       uses: anchore/sbom-action@v0
