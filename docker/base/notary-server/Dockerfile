@@ -3,8 +3,6 @@ FROM notaryserverbuilds.azurecr.io/gramine/tlsn7:latest
 WORKDIR /workspace
 
 ARG CACHE_DATE=1
-ARG BUILD_TAG
-ENV BUILD_TAG=${BUILD_TAG}
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN chmod 1777 /tmp && \
