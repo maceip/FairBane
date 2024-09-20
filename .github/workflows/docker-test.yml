@@ -19,7 +19,7 @@ jobs:
     - name: Build artifact
       run: date > artifact.bin
     - name: Build Dockerfile
-       run:|
+      run: |
           cat <<EOF > Dockerfile
           FROM scratch
           COPY artifact.bin .
