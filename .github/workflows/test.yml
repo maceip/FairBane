@@ -3,9 +3,9 @@ name: tee
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "mastexr" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "mastexr" ]
 
 env:
   CARGO_TERM_COLOR: always
