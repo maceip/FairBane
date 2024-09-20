@@ -18,7 +18,7 @@ RUN chmod 1777 /tmp && \
 RUN python3 -m pip install 'meson>=0.56' 'tomli>=1.1.0' 'tomli-w>=0.4.0'
 
 RUN cd /root && \
-    git clone https://gramineproject/gramine -b v1.7 && \
+    git clone https://github.com/gramineproject/gramine -b v1.7 && \
     cd gramine && \
     meson setup build/ --buildtype=release -Ddirect=enabled -Dsgx=enabled -Ddcap=enabled && \
     ninja -C build && \
