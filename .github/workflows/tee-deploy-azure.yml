@@ -63,13 +63,13 @@ jobs:
           git push
 
       - name: Deploy updated Caddyfile to server
-        uses: appleboy/scp-action@v0.1.3
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.AZURE_TEE_BUILD_HOST }}
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           source: "cd-scripts/tee/azure/Caddyfile"
-          target: "~/"
+          target: "/tmp"
 
       - name: Reload Caddy on server
         uses: appleboy/ssh-action@v0.1.3
@@ -78,5 +78,5 @@ jobs:
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           script: |
-            sudo cp ~/Caddyfile /etc/caddy/Caddyfile
+            sudo cp /tmp/Caddyfile /etc/caddy/Caddyfile
             sudo systemctl reload caddy
