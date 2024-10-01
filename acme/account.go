@@ -11,7 +11,7 @@ import (
 	"github.com/smallstep/certificates/authority/policy"
 )
 
-// Account subset of the internal account type containing only those
+// Account of the internal account type containing only those
 // attributes required for responses in the ACME protocol.
 type Account struct {
 	ID                     string           `json:"-"`
