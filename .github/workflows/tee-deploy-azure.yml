@@ -13,7 +13,9 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
-      - name: up environment
+        with:
+          ref: "dev"
+      - name: prep environment
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
@@ -58,7 +60,7 @@ jobs:
           git config user.email github-actions@github.com
           git add .
           git commit -m "azure tee release: ${RELEASE_TAG}"
-          git push
+          git push origin dev
 
       - name: Deploy updated Caddyfile to server
         uses: appleboy/scp-action@v0.1.3
