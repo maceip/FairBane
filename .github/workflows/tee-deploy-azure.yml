@@ -24,10 +24,12 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
+          #reverse proxy domain
+          DOMAIN=notary.proof.codes
           # Paths to files
           CADDYFILE_PATH='cd-scripts/tee/azure/Caddyfile'
           PORT_FILE='cd-scripts/tee/azure/tags.txt'
-          START_PORT=8081
+          START_PORT=6061
 
           # create ports.txt if it doesn't exist
           if [ ! -f "$PORT_FILE" ]; then
@@ -46,20 +48,20 @@ jobs:
           fi
 
           # check if the tee.notary.dev block already exists in the Caddyfile
-          if ! grep -q "tee.notary.dev {" $CADDYFILE_PATH; then
+          if ! grep -q "$DOMAIN {" $CADDYFILE_PATH; then
             # Add the main block to the Caddyfile if it doesn't exist
-            echo -e "tee.notary.dev {\n}" >> $CADDYFILE_PATH
+            echo -e "$DOMAIN {\n}" >> $CADDYFILE_PATH
           fi
 
           # insert the reverse proxy entry for the new release tag
-          sed -i "/tee.notary.dev {/a \ \ \ \ reverse_proxy /${RELEASE_TAG}* localhost:${NEXT_PORT} {" $CADDYFILE_PATH
+          sed -i "/$DOMAIN {/a \ \ \ \ reverse_proxy /${RELEASE_TAG}* localhost:${NEXT_PORT} {" $CADDYFILE_PATH
 
       - name: Commit and push updated Caddyfile
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
-          git commit -m "azure tee release: ${RELEASE_TAG}"
+          git commit -m "azure proxy update: ${RELEASE_TAG}"
           git push
 
       - name: Deploy updated Caddyfile to server
