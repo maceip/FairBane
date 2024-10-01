@@ -72,7 +72,7 @@ jobs:
           target: "/tmp"
 
       - name: Reload Caddy on server
-        uses: appleboy/ssh-action@v0.1.3
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.AZURE_TEE_BUILD_HOST }}
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
