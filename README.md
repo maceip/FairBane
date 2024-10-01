@@ -3,7 +3,7 @@
 ![fb](https://github.com/user-attachments/assets/e9d66efa-9910-45af-a43e-05f6da3950da)
 # FairBane
 
-### a service for hackers!
+### a service for hackers
 
 this repo demonstrates running core internet infra: ***rootca, geth, tlsnotary, pkarr***; but with a twist: once it's deployed it's secrets will never be revealed. It achieves this via intel's encrypted virtual memory extension: TDX.
 
