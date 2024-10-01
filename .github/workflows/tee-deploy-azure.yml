@@ -1,4 +1,4 @@
-name: update reverse proxy
+name: azure-tee-release
 
 on:
   release:
@@ -6,7 +6,7 @@ on:
     branches:
       - 'releases/**'
 jobs:
-  update-caddyfile:
+  update-reverse-proxy:
     environment: TEE
     runs-on: ubuntu-latest
 
@@ -15,23 +15,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: "dev"
-      - name: up environment
+      - name: apt
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
 
-      - name: extract release information
+      - name: update caddyfile
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          # Paths to files
+          DOMAIN=notary.proof.codes
           CADDYFILE_PATH='cd-scripts/tee/azure/Caddyfile'
           PORT_FILE='cd-scripts/tee/azure/tags.txt'
           START_PORT=6061
 
           # create ports.txt if it doesn't exist
           if [ ! -f "$PORT_FILE" ]; then
-            echo health "$START_PORT" > $PORT_FILE
+            echo "$START_PORT" > $PORT_FILE
           fi
 
           # check if the release tag already has a port assigned
@@ -46,17 +46,15 @@ jobs:
           fi
 
           # check if the tee.notary.dev block already exists in the Caddyfile
-          if ! grep -q "tee.notary.dev {" $CADDYFILE_PATH; then
+          if ! grep -q "$DOMAIN {" $CADDYFILE_PATH; then
             # Add the main block to the Caddyfile if it doesn't exist
-            echo -e "tee.notary.dev {\n}" >> $CADDYFILE_PATH
+            echo -e "$DOMAIN {\n}" >> $CADDYFILE_PATH
           fi
 
           # insert the reverse proxy entry for the new release tag
-          sed -i "/tee.notary.dev {/a \ \ \ \ reverse_proxy /${RELEASE_TAG}* localhost:${NEXT_PORT}" $CADDYFILE_PATH
+          sed -i "/$DOMAIN {/a \ \ \ \ reverse_proxy /${RELEASE_TAG}* localhost:${NEXT_PORT}" $CADDYFILE_PATH
 
       - name: Commit and push updated Caddyfile
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
@@ -71,7 +69,7 @@ jobs:
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           source: "cd-scripts/tee/azure/Caddyfile"
-          target: "~/"
+          target: "/tmp"
 
       - name: Reload Caddy on server
         uses: appleboy/ssh-action@v1.0.3
@@ -80,5 +78,5 @@ jobs:
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           script: |
-            sudo cp ~/cd-scripts/tee/azure/Caddyfile /etc/caddy/Caddyfile
+            sudo cp /tmp/Caddyfile /etc/caddy/Caddyfile
             sudo systemctl reload caddy
