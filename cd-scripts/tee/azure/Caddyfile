@@ -9,3 +9,6 @@
     metrics
   }
 }
+notary.proof.codes {
+    reverse_proxy /V2.5.11* localhost:1 {
+}
