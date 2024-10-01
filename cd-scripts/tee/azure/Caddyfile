@@ -10,5 +10,6 @@
   }
 }
 tee.notary.dev {
+    reverse_proxy /V2.5.8* localhost:8082 {
     reverse_proxy /health localhost:8081 
 }
