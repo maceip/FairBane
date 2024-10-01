@@ -2,7 +2,7 @@ name: gramine
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "masterx" ]
   pull_request:
     branches: [ "master" ]
     
