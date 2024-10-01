@@ -71,18 +71,13 @@ jobs:
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           source: "cd-scripts/tee/azure/Caddyfile"
-          target: ${{ format('/home{0}', secrets.AZURE_BUILD_TEE_USERNAME ) }}
+          target: "~/"
 
       - name: Reload Caddy on server
-        env:
-         CDIR : ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
-
-        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.AZURE_TEE_BUILD_HOST }}
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
-          envs: CDIR
           script: |
-            sudo cp $CDIR /etc/caddy/Caddyfile
+            sudo cp ~/Caddyfile /etc/caddy/Caddyfile
             sudo systemctl reload caddy
