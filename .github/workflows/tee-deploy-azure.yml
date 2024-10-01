@@ -31,7 +31,7 @@ jobs:
 
           # create ports.txt if it doesn't exist
           if [ ! -f "$PORT_FILE" ]; then
-            echo "$START_PORT > $PORT_FILE
+            echo "$START_PORT" > $PORT_FILE
           fi
 
           # check if the release tag already has a port assigned
