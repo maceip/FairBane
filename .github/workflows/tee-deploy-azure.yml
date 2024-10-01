@@ -55,6 +55,8 @@ jobs:
           sed -i "/$DOMAIN {/a \ \ \ \ reverse_proxy /${RELEASE_TAG}* localhost:${NEXT_PORT}" $CADDYFILE_PATH
 
       - name: Commit and push updated Caddyfile
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
@@ -69,7 +71,7 @@ jobs:
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           source: "cd-scripts/tee/azure/Caddyfile"
-          target: "/tmp"
+          target: "~/"
 
       - name: Reload Caddy on server
         uses: appleboy/ssh-action@v1.0.3
@@ -78,5 +80,5 @@ jobs:
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           script: |
-            sudo cp /tmp/Caddyfile /etc/caddy/Caddyfile
+            sudo cp ~/cd-scripts/tee/azure/Caddyfile /etc/caddy/Caddyfile
             sudo systemctl reload caddy
