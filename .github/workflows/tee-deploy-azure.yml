@@ -1,10 +1,10 @@
 name: update reverse proxy
 
 on:
-  push:
+  release:
+    types: [published]
     branches:
       - 'releases/**'
-
 jobs:
   update-caddyfile:
     runs-on: ubuntu-latest
