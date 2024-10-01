@@ -80,5 +80,5 @@ jobs:
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           script: |
-            sudo cp ~/Caddyfile /etc/caddy/Caddyfile
+            sudo cp ~/cd-scripts/tee/azure/Caddyfile /etc/caddy/Caddyfile
             sudo systemctl reload caddy
