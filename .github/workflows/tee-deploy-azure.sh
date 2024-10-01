@@ -1,4 +1,4 @@
-name: deploy new notary-server on azure sgx
+name: update reverse proxy
 
 on:
   release:
@@ -11,15 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: checkout repository
         uses: actions/checkout@v3
-
-      - name: Set up environment
+      - name: up environment
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
 
-      - name: Extract release information
+      - name: extract release information
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
@@ -28,29 +27,29 @@ jobs:
           PORT_FILE='ports.yml'
           START_PORT=8081
 
-          # Create ports.txt if it doesn't exist
+          # create ports.txt if it doesn't exist
           if [ ! -f "$PORT_FILE" ]; then
             echo $START_PORT > $PORT_FILE
           fi
 
-          # Check if the release tag already has a port assigned
+          # check if the release tag already has a port assigned
           ASSIGNED_PORT=$(grep "${RELEASE_TAG}" $PORT_FILE | awk '{print $2}')
 
           if [ -z "$ASSIGNED_PORT" ]; then
-            # Find the next available port if this release tag doesn't have one
+            # find the next available port if this release tag doesn't have one
             NEXT_PORT=$(($(tail -n 1 $PORT_FILE | awk '{print $2}') + 1))
             echo "${RELEASE_TAG} ${NEXT_PORT}" >> $PORT_FILE
           else
             NEXT_PORT=$ASSIGNED_PORT
           fi
 
-          # Check if the tee.notary.dev block already exists in the Caddyfile
+          # check if the tee.notary.dev block already exists in the Caddyfile
           if ! grep -q "tee.notary.dev {" $CADDYFILE_PATH; then
             # Add the main block to the Caddyfile if it doesn't exist
             echo -e "tee.notary.dev {\n}" >> $CADDYFILE_PATH
           fi
 
-          # Insert the reverse proxy entry for the new release tag
+          # insert the reverse proxy entry for the new release tag
           sed -i "/tee.notary.dev {/a \ \ \ \ reverse_proxy /${RELEASE_TAG}* localhost:${NEXT_PORT} {" $CADDYFILE_PATH
 
       - name: Commit and push updated Caddyfile
