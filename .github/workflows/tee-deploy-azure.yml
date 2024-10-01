@@ -26,12 +26,12 @@ jobs:
         run: |
           # Paths to files
           CADDYFILE_PATH='cd-scripts/tee/azure/Caddyfile'
-          PORT_FILE='ports.yml'
+          PORT_FILE='cd-scripts/tee/azure/ports.txt'
           START_PORT=8081
 
           # create ports.txt if it doesn't exist
           if [ ! -f "$PORT_FILE" ]; then
-            echo $START_PORT > $PORT_FILE
+            echo "$START_PORT > $PORT_FILE
           fi
 
           # check if the release tag already has a port assigned
@@ -69,7 +69,7 @@ jobs:
           username: ${{ secrets.AZURE_TEE_BUILD_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           source: "cd-scripts/tee/azure/Caddyfile"
-          target: "/etc/caddy/Caddyfile"
+          target: "/etc/caddy/"
 
       - name: Reload Caddy on server
         uses: appleboy/ssh-action@v0.1.3
@@ -78,4 +78,4 @@ jobs:
           username: ${{ secrets.AZURE_TEE_BUILD_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           script: |
-            caddy reload
+            sudo systemctl reload caddy
