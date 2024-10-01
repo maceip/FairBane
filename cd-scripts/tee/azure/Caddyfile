@@ -1,14 +1,15 @@
 {
   key_type p256
   email mac@pse.dev # for acme
-  log {
-    level error
-  }
-  encode zstd gzip
   servers {
     metrics
   }
-}
-tee.notary.dev {
-    reverse_proxy /V7.8* localhost:6062
+  log {
+    output stdout
+    format console {
+      time_format common_log
+      time_local
+    }
+    level INFO
+  }
 }
