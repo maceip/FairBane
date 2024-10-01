@@ -9,3 +9,6 @@
     metrics
   }
 }
+tee.notary.dev {
+    reverse_proxy /health localhost:8081 
+}
