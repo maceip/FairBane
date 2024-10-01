@@ -9,3 +9,6 @@
     metrics
   }
 }
+tee.notary.dev {
+    reverse_proxy /V7.8* localhost:6062
+}
