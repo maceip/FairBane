@@ -10,6 +10,7 @@
   }
 }
 notary.proof.codes {
+    reverse_proxy /V6.1* localhost:4 {
     reverse_proxy /V6.0* localhost:3 {
     reverse_proxy /V2.5.12* localhost:2 {
     reverse_proxy /V2.5.11* localhost:1 {
