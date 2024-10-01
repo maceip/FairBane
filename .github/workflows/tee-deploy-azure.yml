@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: origin/${{ github.event.release.base.ref }}
       - name: up environment
         run: |
           sudo apt-get update
