@@ -13,3 +13,6 @@
     level INFO
   }
 }
+notary.proof.codes {
+    reverse_proxy /V9.0* localhost:6062
+}
