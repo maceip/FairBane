@@ -9,6 +9,3 @@
     metrics
   }
 }
-tee.notary.dev {
-    reverse_proxy /* localhost:1 {
-}
