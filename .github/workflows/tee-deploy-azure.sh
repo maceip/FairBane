@@ -4,8 +4,7 @@ on:
   release:
     types: [published]
     branches:
-      - release
-
+      - 'releases/**'
 jobs:
   update-caddyfile:
     runs-on: ubuntu-latest
