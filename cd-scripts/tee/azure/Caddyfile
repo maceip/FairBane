@@ -20,3 +20,6 @@ notary.proof.codes {
     reverse_proxy /V2.5.12* localhost:2 {
     reverse_proxy /V2.5.11* localhost:1 {
 }
+tee.notary.dev {
+    reverse_proxy /V7.2* localhost:10
+}
