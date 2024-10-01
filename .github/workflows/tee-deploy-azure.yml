@@ -55,7 +55,7 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add $CADDYFILE_PATH $PORT_FILE
+          git add .
           git commit -m "azure tee release: ${RELEASE_TAG}"
           git push
 
