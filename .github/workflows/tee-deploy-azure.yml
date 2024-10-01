@@ -7,7 +7,7 @@ on:
       - 'releases/**'
 jobs:
   update-caddyfile:
-    environment: tee
+    environment: TEE
     runs-on: ubuntu-latest
 
     steps:
