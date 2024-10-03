@@ -27,8 +27,8 @@ jobs:
           chrome-webstore-upload upload \\
             --source tlsnotary-extension.zip \\
             --extension-id gcfkkledipjbgdbimfpijgbkhajiaaph \\
-            --client-id ${{ secrets.CI_GOOGLE_CLIENT_ID }} \\
-            --client-secret ${{ secrets.CI_GOOGLE_CLIENT_SECRET }} \\
-            --refresh-token ${{ secrets.CI_GOOGLE_REFRESH_TOKEN }}
+            --client-id ${{ secrets.CWS_GOOGLE_CLIENT_ID }} \\
+            --client-secret ${{ secrets.CWS_GOOGLE_CLIENT_SECRET }} \\
+            --refresh-token ${{ secrets.CWS_GOOGLE_REFRESH_TOKEN }}
            chrome-webstore-upload publish --extension-id gcfkkledipjbgdbimfpijgbkhajiaaph
    
