@@ -12,18 +12,10 @@ jobs:
           node-version: "16.10"
      - name: Install webstore cli
        run: |-
-          npm install -g chrome-webstore-upload-cli
-     - name: get tlsn ext zip artifact
-       uses: actions/download-artifact@v4.1.8
-       with:
-          merge-multiple: true
-     - name: normalize filename
-       run: |
-          ls -la .
+          RELEASE=$(gh release list --repo tlsnotary/tlsn-extension -L1 | awk '{print $1}')
+          gh release download $RELEASE --repo tlsnotary/tlsn-extension
           mv *.zip tlsnotary-extension.zip
-     - name: Upload step
-       run: |-
-          : # get the token/secret/client-id from: https://developer.chrome.com/docs/webstore/using-api
+          npm install -g chrome-webstore-upload-cli
           chrome-webstore-upload upload \\
             --source tlsnotary-extension.zip \\
             --extension-id gcfkkledipjbgdbimfpijgbkhajiaaph \\
@@ -31,4 +23,3 @@ jobs:
             --client-secret ${{ secrets.CWS_GOOGLE_CLIENT_SECRET }} \\
             --refresh-token ${{ secrets.CWS_GOOGLE_REFRESH_TOKEN }}
            chrome-webstore-upload publish --extension-id gcfkkledipjbgdbimfpijgbkhajiaaph
-   
