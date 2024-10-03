@@ -1,0 +1,33 @@
+name: chromewebstorepublish
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/setup-node@v2-beta
+       with:
+          node-version: "16.10"
+     - name: Install webstore cli
+       run: |-
+          npm install -g chrome-webstore-upload-cli
+     - name: get tlsn ext zip artifact
+       uses: actions/download-artifact@v4.1.8
+       with:
+          merge-multiple: true
+     - name: normalize filename
+       run: |
+          ls -la .
+          mv *.zip tlsnotary-extension.zip
+     - name: Upload step
+       run: |-
+          chrome-webstore-upload upload \\
+            --source tlsnotary-extension.zip \\
+            --extension-id gcfkkledipjbgdbimfpijgbkhajiaaph \\
+            --client-id ${{ secrets.CI_GOOGLE_CLIENT_ID }} \\
+            --client-secret ${{ secrets.CI_GOOGLE_CLIENT_SECRET }} \\
+            --refresh-token ${{ secrets.CI_GOOGLE_REFRESH_TOKEN }}
+           chrome-webstore-upload publish --extension-id gcfkkledipjbgdbimfpijgbkhajiaaph
+   
