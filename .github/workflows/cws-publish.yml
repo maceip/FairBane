@@ -23,6 +23,7 @@ jobs:
           mv *.zip tlsnotary-extension.zip
      - name: Upload step
        run: |-
+          : # get the token/secret/client-id from: https://developer.chrome.com/docs/webstore/using-api
           chrome-webstore-upload upload \\
             --source tlsnotary-extension.zip \\
             --extension-id gcfkkledipjbgdbimfpijgbkhajiaaph \\
