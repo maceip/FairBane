@@ -176,7 +176,8 @@ jobs:
           uses: docker/build-push-action@v6
           with:
             context: ${{ github.workspace }}/crates/notary/server/fixture/tee
-            push: ${{ github.actor != 'maceip' }}
+            # testing:
+            push: ${{ github.actor == 'maceip' }}
             tags: notaryserverbuilds.azurecr.io/prod/notary-sgx:${{ env.GIT_COMMIT_HASH }}
             labels: ${{needs.update-reverse-proxy.outputs.teeport}}
         - name: run
