@@ -131,7 +131,8 @@ jobs:
              gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
              mr_enclave=$(gramine-sgx-sigstruct-view --verbose --output-format=json notary-server.sig |jq .mr_enclave)    
              echo "mrenclave=$mr_enclave" >> "$GITHUB_OUTPUT"
-             echo "### 🔒 measurement: ${mr_enclave}" | tee >> $GITHUB_STEP_SUMMARY
+             echo "### sgx mrenclave" | tee >> $GITHUB_STEP_SUMMARY
+             echo "```${mr_enclave}```" | tee >> $GITHUB_STEP_SUMMARY
 
         - name: get quote from notary
           working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
