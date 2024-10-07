@@ -24,6 +24,7 @@ tee.notary.codes {
     reverse_proxy /dev* localhost:6062
     reverse_proxy /dev* localhost:6062
     reverse_proxy /dev* localhost:6062
+    reverse_proxy /dev* localhost:6062
     reverse_proxy /* localhost:6061
     reverse_proxy /* localhost:6061
     reverse_proxy /* localhost:6061
