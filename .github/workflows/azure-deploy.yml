@@ -157,7 +157,7 @@ jobs:
   artifact-deploy:
       environment: tee
       runs-on: [self-hosted, linux]
-      needs: [ build-measure ]
+      needs: [ build-measure, update-reverse-proxy ]
        # outputs:
        # result: ${{ steps.artifact.outputs.hash}}
       steps:
