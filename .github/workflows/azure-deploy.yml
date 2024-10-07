@@ -107,6 +107,16 @@ jobs:
           with:
             repository: tlsnotary/tlsn
             ref: quote-presentation
+        - name: sccache
+          if: github.event_name != 'release'
+          # && github.event_name != 'workflow_dispatch'
+          uses: mozilla-actions/sccache-action@v0.0.6
+        - name: set rust env for scc
+          if: github.event_name != 'release'
+          # && github.event_name != 'workflow_dispatch'
+          run: |
+            echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
+            echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
         - name: reverse proxy port
           run: echo "${{needs.update-reverse-proxy.outputs.teeport}}" | tee >> $GITHUB_STEP_SUMMARY
 
@@ -133,6 +143,7 @@ jobs:
                mkdir config && cp config.yaml config && mkdir /tee && cp -R ../tee/* /tee/ && cd /tee && 
                : # invoke sgx (use gramine-direct to emulate sgx hardware):
                gramine-sgx notary-server &
+               sleep 5
                quote=$(curl 127.0.0.1:7047/info | jq .quote.raqQuote)
                echo "quote=$quote" >> $GITHUB_OUTPUT
                echo "### 🔒 signed quote: ${quote}" | tee >> $GITHUB_STEP_SUMMAR
