@@ -84,7 +84,7 @@ jobs:
           script: |
             sudo cp ~/cd-scripts/tee/azure/Caddyfile /etc/caddy/Caddyfile
             sudo systemctl reload caddy
-  build-measure-deploy:
+  build-measure:
       environment: tee
       runs-on: [self-hosted, linux]
       needs: [ update-reverse-proxy ]
@@ -128,8 +128,14 @@ jobs:
                gramine-sgx notary-server &
                sleep 5
                curl 127.0.0.1:7047/info
-        -
-          name: auth to registry
+  artifact-deploy:
+      environment: tee
+      runs-on: [self-hosted, linux]
+      needs: [ build-measure ]
+     # outputs:
+       # result: ${{ steps.artifact.outputs.hash}}
+      steps:
+        - name: auth to registry
           uses: docker/login-action@v3
           with:
             registry: notaryserverbuilds.azurecr.io
@@ -143,7 +149,7 @@ jobs:
           with:
             context: ${{ github.workspace }}/crates/notary/server/fixture/tee
             push: ${{github.actor}} == 'maceip }}
-            tags: $GIT_COMMIT_HASH
+            tags: notaryserverbuilds.azurecr.io/prod/notary-sgx$GIT_COMMIT_HASH
             labels: ${{needs.update-reverse-proxy.outputs.teeport}}
         - name: run
           run: |
