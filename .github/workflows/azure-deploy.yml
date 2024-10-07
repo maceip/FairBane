@@ -1,10 +1,11 @@
 name: azure-tee-release
 
-on:
-  release:
-    types: [published]
-    branches:
-      - 'releases/**'
+on: workflow_dispatch
+#on:
+#  release:
+#    types: [published]
+#    branches:
+#      - 'releases/**'
 jobs:
   update-reverse-proxy:
     environment: tee
