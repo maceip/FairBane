@@ -97,7 +97,7 @@ jobs:
           username: notaryserverbuilds
           password: ${{ secrets.AZURE_CR_BUILDS_PW }}
         env:
-          GIT_COMMIT_HASH: $EVENTTAG
+          GIT_COMMIT_HASH: ${{ github.event.pull_request.head.sha || github.sha }}
           GIT_COMMIT_TIMESTAMP: ${{ github.event.repository.updated_at}}
         volumes:
          - /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket
@@ -120,10 +120,11 @@ jobs:
              gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
              mr_enclave=$(gramine-sgx-sigstruct-view --verbose --output-format=json notary-server.sig |jq .mr_enclave)    
              echo "mrenclave=$mr_enclave" >> "$GITHUB_OUTPUT"
-             echo "# 🔒 the stable measurement for ${GIT_COMMIT_HASH} is ${mr_enclave}" | tee >> $GITHUB_STEP_SUMMARY
+             echo "### 🔒 measurement: ${mr_enclave}" | tee >> $GITHUB_STEP_SUMMARY
 
-        - name: get measurement from notary
+        - name: get quote from notary
           working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
+          id: attestation
           run: |
                SGX=1 make
                gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
@@ -132,7 +133,11 @@ jobs:
                : # invoke sgx (use gramine-direct to emulate sgx hardware):
                gramine-sgx notary-server &
                sleep 5
-               curl 127.0.0.1:7047/info
+               {
+                 echo "quote<<EOF"
+                 curl 127.0.0.1:7047/info
+                 echo "EOF"
+               } >> "$GITHUB_OUTPUT"
   artifact-deploy:
       environment: tee
       runs-on: [self-hosted, linux]
