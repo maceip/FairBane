@@ -100,7 +100,8 @@ jobs:
           run: |
              curl https://sh.rustup.rs -sSf | sh -s -- -y
              . "$HOME/.cargo/env"
-             apt install libssl-dev 
+             apt install libssl-dev
+             gramine-sgx-gen-private-key
              make
              gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
              mr_enclave=$(gramine-sgx-sigstruct-view --verbose --output-format=json notary-server.sig |jq .mr_enclave)    
