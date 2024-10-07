@@ -95,18 +95,16 @@ jobs:
           with:
             repository: tlsnotary/tlsn
             ref: quote-presentation
-        - name: get emulated measurement
+        - name: get measurement
           working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
              curl https://sh.rustup.rs -sSf | sh -s -- -y
              . "$HOME/.cargo/env"
+             apt install libssl-dev 
              make
-             gramine-sgx-sigstruct-view --verbose --output-format=toml notary-server.sig
-        - name: get real measurement
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
-          run: |
-             SGX=1 make
-             gramine-sgx-sigstruct-view --verbose --output-format=toml notary-server.sig
+             gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
+             mr_enclave=$(gramine-sgx-sigstruct-view --verbose --output-format=json notary-server.sig |jq .mr_enclave)    
+             echo "mrenclave=$mr_enclave" >> "$GITHUB_OUTPUT"
         - name: get measurement from notary
           working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
