@@ -53,6 +53,8 @@ jobs:
           fi
           # insert the reverse proxy entry for the new release tag
           sed -i "/$DOMAIN {/a \ \ \ \ reverse_proxy /${handler}* localhost:${NEXT_PORT}" $CADDYFILE_PATH
+          echo "proxying /${handler} to 127.0.0.1/${NEXT_PORT}" | tee >> $GITHUB_STEP_SUMMARY
+
       - name: Commit and push updated Caddyfile
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
@@ -82,6 +84,7 @@ jobs:
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           script: |
+          
             sudo cp ~/cd-scripts/tee/azure/Caddyfile /etc/caddy/Caddyfile
             sudo systemctl reload caddy
   build-measure:
@@ -117,6 +120,8 @@ jobs:
              gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
              mr_enclave=$(gramine-sgx-sigstruct-view --verbose --output-format=json notary-server.sig |jq .mr_enclave)    
              echo "mrenclave=$mr_enclave" >> "$GITHUB_OUTPUT"
+             echo "# 🔒 the stable measurement for ${GIT_COMMIT_HASH} is ${mr_enclave}" | tee >> $GITHUB_STEP_SUMMARY
+
         - name: get measurement from notary
           working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
