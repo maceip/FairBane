@@ -111,9 +111,13 @@ jobs:
         - name: get measurement from notary
           working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
-             SGX=1 make
-             SGX=1 make start-gramine-server &
-             curl 127.0.0.1:7047/info
+               SGX=1 make
+               gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
+               : # set up the fs like the hosted notary docker container:
+               mkdir /tee && cp -R ../tee/* /tee/ && cd /tee
+               : # invoke sgx (use gramine-direct to emulate sgx hardware):
+               gramine-sgx notary-server &
+               curl 127.0.0.1:7047/info
         - name: Build and push
           uses: docker/build-push-action@v6
           with:
