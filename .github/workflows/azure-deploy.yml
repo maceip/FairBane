@@ -108,7 +108,7 @@ jobs:
         - name: get measurement
           working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
-             echo "prep for notary deploy, target port is {{needs.update-reverse-proxy.outputs.teeport}}" | tee >> "$GITHUB_OUTPUT"
+             echo "prep for notary deploy, target port is ${{needs.update-reverse-proxy.outputs.teeport}}" | tee >> $GITHUB_STEP_SUMMARY
              curl https://sh.rustup.rs -sSf | sh -s -- -y
              . "$HOME/.cargo/env"
              apt install libssl-dev
