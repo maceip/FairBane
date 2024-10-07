@@ -88,6 +88,8 @@ jobs:
         env:
           GIT_COMMIT_HASH: $EVENTTAG
           GIT_COMMIT_TIMESTAMP: ${{ github.event.repository.updated_at}}
+        volumes:
+         - /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket
         options: "--device /dev/sgx_enclave"
       steps:
         - name: get code
