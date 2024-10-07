@@ -28,6 +28,10 @@ jobs:
           CADDYFILE_PATH='cd-scripts/tee/azure/Caddyfile'
           PORT_FILE='cd-scripts/tee/azure/tags.txt'
           START_PORT=6061
+          handler=$RELEASE_TAG
+           if [ -z "${RELEASE_TAG}" ]; then
+            handler=dev
+          fi
           # create ports.txt if it doesn't exist
           if [ ! -f "$PORT_FILE" ]; then
             echo "health $START_PORT" > $PORT_FILE
@@ -117,6 +121,7 @@ jobs:
                mkdir /tee && cp -R ../tee/* /tee/ && cd /tee
                : # invoke sgx (use gramine-direct to emulate sgx hardware):
                gramine-sgx notary-server &
+               sleep 5
                curl 127.0.0.1:7047/info
         - name: Build and push
           uses: docker/build-push-action@v6
