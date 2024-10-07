@@ -37,11 +37,11 @@ jobs:
             echo "health $START_PORT" > $PORT_FILE
           fi
           # check if the release tag already has a port assigned
-          ASSIGNED_PORT=$(grep "${RELEASE_TAG}" $PORT_FILE | awk '{print $2}')
+          ASSIGNED_PORT=$(grep "${handler}" $PORT_FILE | awk '{print $2}')
           if [ -z "$ASSIGNED_PORT" ]; then
             # find the next available port if this release tag doesn't have one
             NEXT_PORT=$(($(tail -n 1 $PORT_FILE | awk '{print $2}') + 1))
-            echo "${RELEASE_TAG} ${NEXT_PORT}" >> $PORT_FILE
+            echo "${handler} ${NEXT_PORT}" >> $PORT_FILE
           else
             NEXT_PORT=$ASSIGNED_PORT
           fi
@@ -52,15 +52,19 @@ jobs:
             echo -e "$DOMAIN {\n}" >> $CADDYFILE_PATH
           fi
           # insert the reverse proxy entry for the new release tag
-          sed -i "/$DOMAIN {/a \ \ \ \ reverse_proxy /${RELEASE_TAG}* localhost:${NEXT_PORT}" $CADDYFILE_PATH
+          sed -i "/$DOMAIN {/a \ \ \ \ reverse_proxy /${handler}* localhost:${NEXT_PORT}" $CADDYFILE_PATH
       - name: Commit and push updated Caddyfile
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
+          handler=$RELEASE_TAG
+          if [ -z "${RELEASE_TAG}" ]; then
+            handler=dev
+          fi
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
-          git commit -m "azure tee release: ${RELEASE_TAG}"
+          git commit -m "azure tee release: ${handler}"
           git push
       - name: Deploy updated Caddyfile to server
         uses: appleboy/scp-action@v0.1.7
