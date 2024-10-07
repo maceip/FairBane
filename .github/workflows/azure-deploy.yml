@@ -11,6 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       teeport: ${{ steps.portbump.outputs.newport}}
+    container:
+      image: notaryserverbuilds.azurecr.io/prod/gramine
+      credentials:
+        username: notaryserverbuilds
+        password: ${{ secrets.AZURE_CR_BUILDS_PW }}
+      env:
+        GIT_COMMIT_HASH: $EVENTTAG
+        GIT_COMMIT_TIMESTAMP: ${{ github.event.repository.updated_at}}
+      options: "--device /dev/sgx_enclave"
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -25,7 +34,7 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          DOMAIN=notary.covert.codes
+          DOMAIN=tee.notary.codes
           CADDYFILE_PATH='cd-scripts/tee/azure/Caddyfile'
           PORT_FILE='cd-scripts/tee/azure/tags.txt'
           START_PORT=6061
@@ -82,7 +91,7 @@ jobs:
       runs-on: [self-hosted, linux]
       needs: [ update-reverse-proxy ]
       container:
-        image: notaryserverbuilds.azurecr.io/builder/gramine
+        image: notaryserverbuilds.azurecr.io/prod/gramine
         credentials:
           username: notaryserverbuilds
           password: ${{ secrets.AZURE_CR_BUILDS_PW }}
@@ -93,6 +102,9 @@ jobs:
       steps:
         - name: get code
           uses: actions/checkout@v4
+          with:
+            repository: tlsnotary/tlsn
+            ref: quote-presentation
         - name: get emulated measurement
           run: |
              cd crates/notary/server/fixture/gramine
@@ -113,8 +125,8 @@ jobs:
           uses: docker/build-push-action@v6
           with:
             push: true
-            tags: notaryserverbuilds.azurecr.io/prod/gramine:$GIT_COMMIT_HASH
+            tags: notaryserverbuilds.azurecr.io/prod/notary-sgx:$GIT_COMMIT_HASH
         - name: run
           run: |
-           docker run --device /dev/sgx_enclave --device /dev/sgx_provision -p  ${{needs.update-reverse-proxy.outputs.teeport}}:7047 notaryserverbuilds.azurecr.io/prod/gramine:$GIT_COMMIT_HASH
+           docker run --device /dev/sgx_enclave --device /dev/sgx_provision --volume=/var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket -p  ${{needs.update-reverse-proxy.outputs.teeport}}:7047 notaryserverbuilds.azurecr.io/prod/notary-sgx:$GIT_COMMIT_HASH
       
