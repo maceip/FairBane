@@ -13,3 +13,6 @@
     level INFO
   }
 }
+tee.notary.codes {
+    reverse_proxy /* localhost:6061
+}
