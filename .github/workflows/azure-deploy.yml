@@ -9,7 +9,7 @@ on: workflow_dispatch
 jobs:
   update-reverse-proxy:
     environment: tee
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     outputs:
       teeport: ${{ steps.portbump.outputs.newport}}
     container:
