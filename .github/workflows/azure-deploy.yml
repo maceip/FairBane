@@ -98,6 +98,8 @@ jobs:
         - name: get emulated measurement
           working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
+             curl https://sh.rustup.rs -sSf | sh -s -- -y
+             . "$HOME/.cargo/env"
              make
              gramine-sgx-sigstruct-view --verbose --output-format=toml notary-server.sig
         - name: get real measurement
