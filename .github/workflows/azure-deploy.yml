@@ -122,7 +122,7 @@ jobs:
                SGX=1 make
                gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
                : # set up the fs like the hosted notary docker container:
-               mkdir /tee && cp -R ../tee/* /tee/ && cd /tee
+               mkdir config && cp config.yaml config && mkdir /tee && cp -R ../tee/* /tee/ && cd /tee && 
                : # invoke sgx (use gramine-direct to emulate sgx hardware):
                gramine-sgx notary-server &
                sleep 5
