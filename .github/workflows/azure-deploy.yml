@@ -12,20 +12,12 @@ jobs:
     runs-on: [self-hosted, linux]
     outputs:
       teeport: ${{ steps.portbump.outputs.newport}}
-    container:
-      image: notaryserverbuilds.azurecr.io/prod/gramine
-      credentials:
-        username: notaryserverbuilds
-        password: ${{ secrets.AZURE_CR_BUILDS_PW }}
-      env:
-        GIT_COMMIT_HASH: $EVENTTAG
-        GIT_COMMIT_TIMESTAMP: ${{ github.event.repository.updated_at}}
-      options: "--device /dev/sgx_enclave"
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
         with:
-          ref: "dev"
+          repository: tlsnotary/tlsn 
+          ref: quote-presentation
       - name: apt
         run: |
           sudo apt-get update
