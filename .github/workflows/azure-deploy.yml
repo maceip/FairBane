@@ -96,17 +96,17 @@ jobs:
             repository: tlsnotary/tlsn
             ref: quote-presentation
         - name: get emulated measurement
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/gramine
+          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
              make
              gramine-sgx-sigstruct-view --verbose --output-format=toml notary-server.sig
         - name: get real measurement
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/gramine
+          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
              SGX=1 make
              gramine-sgx-sigstruct-view --verbose --output-format=toml notary-server.sig
         - name: get measurement from notary
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/gramine
+          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
              SGX=1 make
              SGX=1 make start-gramine-server &
