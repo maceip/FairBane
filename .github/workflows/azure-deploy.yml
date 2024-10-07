@@ -152,7 +152,9 @@ jobs:
                quote=$(curl 127.0.0.1:7047/info | jq .quote.rawQuote)
                echo $quote
                echo "quote=$quote" >> $GITHUB_OUTPUT
-               echo "#### 🔒 signed quote: ${quote}" | tee >> $GITHUB_STEP_SUMMARY
+               echo "#### 🔒 signed quote ${quote}" | tee >> $GITHUB_STEP_SUMMARY
+               echo "${quote}" | tee >> $GITHUB_STEP_SUMMARY
+
      
   artifact-deploy:
       environment: tee
