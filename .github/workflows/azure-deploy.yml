@@ -149,7 +149,7 @@ jobs:
                : # invoke sgx (use gramine-direct to emulate sgx hardware):
                gramine-sgx notary-server &
                sleep 5
-               quote=$(curl 127.0.0.1:7047/info | jq .quote.raqQuote)
+               quote=$(curl 127.0.0.1:7047/info | jq .quote.rawQuote)
                echo $quote
                echo "quote=$quote" >> $GITHUB_OUTPUT
                echo "#### 🔒 signed quote: ${quote}" | tee >> $GITHUB_STEP_SUMMARY
