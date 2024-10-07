@@ -84,7 +84,6 @@ jobs:
           username: ${{ secrets.AZURE_BUILD_TEE_USERNAME }}
           key: ${{ secrets.AZURE_TEE_BUILD_KEY }}
           script: |
-          
             sudo cp ~/cd-scripts/tee/azure/Caddyfile /etc/caddy/Caddyfile
             sudo systemctl reload caddy
   build-measure:
@@ -108,10 +107,12 @@ jobs:
           with:
             repository: tlsnotary/tlsn
             ref: quote-presentation
+        - name: reverse proxy port
+          run: echo "${{needs.update-reverse-proxy.outputs.teeport}}" | tee >> $GITHUB_STEP_SUMMARY
+
         - name: get measurement
           working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
-             echo "prep for notary deploy, target port is ${{needs.update-reverse-proxy.outputs.teeport}}" | tee >> $GITHUB_STEP_SUMMARY
              curl https://sh.rustup.rs -sSf | sh -s -- -y
              . "$HOME/.cargo/env"
              apt install libssl-dev
@@ -132,12 +133,10 @@ jobs:
                mkdir config && cp config.yaml config && mkdir /tee && cp -R ../tee/* /tee/ && cd /tee && 
                : # invoke sgx (use gramine-direct to emulate sgx hardware):
                gramine-sgx notary-server &
-               sleep 5
-               {
-                 echo "quote<<EOF"
-                 curl 127.0.0.1:7047/info
-                 echo "EOF"
-               } >> "$GITHUB_OUTPUT"
+               quote=$(curl 127.0.0.1:7047/info | jq .quote.raqQuote)
+               echo "quote=$quote" >> $GITHUB_OUTPUT
+               echo "### 🔒 signed quote: ${quote}" | tee >> $GITHUB_STEP_SUMMAR
+     
   artifact-deploy:
       environment: tee
       runs-on: [self-hosted, linux]
