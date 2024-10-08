@@ -18,4 +18,4 @@ jobs:
             echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
             
       - name: Clippy
-        run: cargo clippy --all-features --all-targets -- -D warnings
+        run: rustup component add clippy && cargo clippy --all-features --all-targets -- -D warnings 
