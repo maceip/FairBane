@@ -1,0 +1,21 @@
+name: zz
+on: workflow_dispatch
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    container:
+      image: rust:slim-bullseye
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: use caching
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: tell rustc about cache
+        run: |
+            echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
+            echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
+            
+      - name: Clippy
+        run: cargo clippy --all-features --all-targets -- -D warnings
