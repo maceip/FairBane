@@ -52,6 +52,8 @@ add_new_handle_path() {
     mv "$tmp_file" "$CADDYFILE"
 
 }
+#git action perms +r
+chmod 664 cd-scripts/tee/azure/Caddyfile
 
 # Check if the commit hash already exists in a handle_path
 if handle_path_exists "$GIT_COMMIT_HASH"; then
