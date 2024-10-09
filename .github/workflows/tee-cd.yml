@@ -1,7 +1,7 @@
 name: azure-tee-release
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
     inputs:
       ref:
         description: 'git branch'
