@@ -1,9 +1,10 @@
 #/bin/sh
-HW=${1:-0}
-if [ "$HW" -eq "0" ]; then
-run='gramine-direct  notary-server &'
-else
-run='gramine-sgx  notary-server &'
+if [ -z "$1" ]
+  then
+     run='gramine-direct  notary-server &'
+
+   else
+      run='gramine-sgx  notary-server &
 fi
 
 curl https://sh.rustup.rs -sSf | sh -s -- -y
