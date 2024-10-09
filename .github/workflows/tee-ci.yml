@@ -42,6 +42,6 @@ jobs:
             echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
     
         - name: get emulated measurement (call gramine.sh without the sgx arg)
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
+          working-directory: ${{ github.workspace }}/crates/notary/server/tee
           run: |
              bash .github/scripts/gramine.sh
