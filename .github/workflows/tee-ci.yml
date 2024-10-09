@@ -1,10 +1,13 @@
 name: build-on-sgx
 
 on:
-  push:
-    branches: [ "quote-presentation" ]
-  pull_request:
-    branches: [ "quote-presentation" ]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'git branch'
+        required: false
+        default: 'dev'
+        type: string
     
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
