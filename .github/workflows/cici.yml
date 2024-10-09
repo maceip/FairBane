@@ -43,7 +43,7 @@ jobs:
             echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
             echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
         - name: get emu measurement
-          working-directory: tlsn/crates/notary/server/fixture/tee
+          working-directory: tlsn/crates/notary/server/tee
           run: |
              curl https://sh.rustup.rs -sSf | sh -s -- -y
              . "$HOME/.cargo/env"
@@ -57,7 +57,7 @@ jobs:
              echo "\`\`\`${mr_enclave}\`\`\`" | tee >> $GITHUB_STEP_SUMMARY
 
         - name: get quote from notary
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
+          working-directory: ${{ github.workspace }}/crates/notary/server/tee
           id: attestation
           run: |
                SGX=1 make
@@ -106,7 +106,7 @@ jobs:
     
 
         - name: get measurement
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
+          working-directory: ${{ github.workspace }}/crates/notary/server/tee
           run: |
              curl https://sh.rustup.rs -sSf | sh -s -- -y
              . "$HOME/.cargo/env"
@@ -120,7 +120,7 @@ jobs:
              echo "\`\`\`${mr_enclave}\`\`\`" | tee >> $GITHUB_STEP_SUMMARY
 
         - name: get quote from notary
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
+          working-directory: ${{ github.workspace }}/crates/notary/server/tee
           id: attestation
           run: |
                SGX=1 make
