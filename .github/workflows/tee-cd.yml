@@ -38,18 +38,14 @@ jobs:
           NEXT_PORT=$(bash cd-scripts/tee/azure/updateproxy.sh 'cd-scripts/tee/azure/Caddyfile' $RELEASE_TAG)
           echo $NEXT_PORT
           echo "newport=$NEXT_PORT" >> $GITHUB_OUTPUT
-      - name: Commit and push updated Caddyfile
-        env:
-         # RELEASE_TAG: ${{ github.event.release.tag_name }}
-           RELEASE_TAG: ${{ inputs.ref }}
-
-        run: |
-          echo  
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add .
-          git commit -m "azure tee release: ${RELEASE_TAG}"
-          git push
+          git add -A
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "azure tee reverse proxy => port:$NEXT_PORT/${RELEASE_TAG}"
+            git push
+            echo "deploy=new" >> $GITHUB_OUTPUT
+          fi
       - name: Deploy updated Caddyfile to server
         uses: appleboy/scp-action@v0.1.7
         with:
