@@ -43,7 +43,7 @@ jobs:
             echo "SCCACHE_GHA_ENABLED=true" >> $GITHUB_ENV
             echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
         - name: get emu measurement
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
+          working-directory: tlsn/crates/notary/server/fixture/tee
           run: |
              curl https://sh.rustup.rs -sSf | sh -s -- -y
              . "$HOME/.cargo/env"
