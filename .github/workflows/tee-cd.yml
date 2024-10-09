@@ -51,7 +51,7 @@ jobs:
             echo "deploy=new" >> $GITHUB_OUTPUT
           fi
       - name: Deploy updated Caddyfile to server
-        if: ${{ steps.portbump.outputs.deploy == new }}
+        if: ${{ steps.portbump.outputs.deploy == 'new' }}
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.AZURE_TEE_PROD_HOST }}
@@ -61,7 +61,7 @@ jobs:
           target: "~/"
 
       - name: Reload Caddy on server
-        if: ${{ steps.portbump.outputs.deploy == new }}
+        if: ${{ steps.portbump.outputs.deploy == 'new' }}
 
         uses: appleboy/ssh-action@v1.0.3
         with:
