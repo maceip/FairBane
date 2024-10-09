@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Variables (Update these as needed)x
 CADDYFILE=${1:-/etc/caddy/Caddyfile}  # Path to your Caddyfile
