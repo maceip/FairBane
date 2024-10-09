@@ -102,36 +102,10 @@ jobs:
         - name: reverse proxy port
           run: echo "${{needs.update-reverse-proxy.outputs.teeport}}" | tee >> $GITHUB_STEP_SUMMARY
 
-        - name: get measurement
+        - name: get hardware measurement
           working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
           run: |
-             curl https://sh.rustup.rs -sSf | sh -s -- -y
-             . "$HOME/.cargo/env"
-             apt install libssl-dev
-             gramine-sgx-gen-private-key
-             make
-             gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
-             mr_enclave=$(gramine-sgx-sigstruct-view --verbose --output-format=json notary-server.sig |jq .mr_enclave)    
-             echo "mrenclave=$mr_enclave" >> "$GITHUB_OUTPUT"
-             echo "#### sgx mrenclave" | tee >> $GITHUB_STEP_SUMMARY
-             echo "\`\`\`${mr_enclave}\`\`\`" | tee >> $GITHUB_STEP_SUMMARY
-
-        - name: get quote from notary
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
-          id: attestation
-          run: |
-               SGX=1 make
-               gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
-               : # set up the fs like the hosted notary docker container:
-               mkdir config && cp config.yaml config && mkdir /tee && cp -R ../tee/* /tee/ && cd /tee && 
-               : # invoke sgx (use gramine-direct to emulate sgx hardware):
-               gramine-sgx notary-server &
-               sleep 5
-               quote=$(curl 127.0.0.1:7047/info | jq .quote.rawQuote)
-               echo $quote
-               echo "quote=$quote" >> $GITHUB_OUTPUT
-               echo "#### 🔒 signed quote ${quote}" | tee >> $GITHUB_STEP_SUMMARY
-               echo "${quote}" | tee >> $GITHUB_STEP_SUMMARY
+             bash .github/scripts/gramine.sh sgx
  
   artifact-deploy:
       if: ${{needs.update-reverse-proxy.outputs.deploy == 'new' }}
@@ -210,8 +184,6 @@ jobs:
           name: Set up Docker Buildx
           uses: docker/setup-buildx-action@v3
         - name: Build and push
-         
-   
           uses: docker/build-push-action@v6
           with:
             context: ${{ github.workspace }}/crates/notary/server/fixture/tee
