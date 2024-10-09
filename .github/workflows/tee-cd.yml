@@ -28,10 +28,6 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
-      - name: apt
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
       - name: update caddyfile
         id: portbump
         env:
@@ -40,6 +36,7 @@ jobs:
 
         run: |
           NEXT_PORT=$(bash cd-scripts/tee/azure/updateproxy.sh 'cd-scripts/tee/azure/Caddyfile' $RELEASE_TAG)
+          echo $NEXT_PORT
           echo "newport=$NEXT_PORT" >> $GITHUB_OUTPUT
       - name: Commit and push updated Caddyfile
         env:
@@ -47,14 +44,11 @@ jobs:
            RELEASE_TAG: ${{ inputs.ref }}
 
         run: |
-          handler=$RELEASE_TAG
-          if [ -z "${RELEASE_TAG}" ]; then
-            handler=dev
-          fi
+          echo  
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
-          git commit -m "azure tee release: ${handler}"
+          git commit -m "azure tee release: ${RELEASE_TAG}"
           git push
       - name: Deploy updated Caddyfile to server
         uses: appleboy/scp-action@v0.1.7
