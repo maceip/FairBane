@@ -4,7 +4,7 @@ if [ -z "$1" ]
      run='gramine-direct  notary-server &'
 
    else
-      run='gramine-sgx  notary-server &
+      run='gramine-sgx  notary-server &'
 fi
 
 curl https://sh.rustup.rs -sSf | sh -s -- -y
