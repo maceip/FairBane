@@ -56,7 +56,6 @@ jobs:
             echo "mrenclave=$mr_enclave" >> "$GITHUB_OUTPUT"
             echo "#### sgx mrenclave" | tee >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`${mr_enclave}\`\`\`" | tee >> $GITHUB_STEP_SUMMARY
-            mkdir config && cp config.yaml config && mkdir /tee && cp -R ../tee/* /tee/ && cd /tee &&
             eval "$run"
             sleep 5
             quote=$(curl 127.0.0.1:7047/info | jq .quote.rawQuote)
