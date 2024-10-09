@@ -1,6 +1,14 @@
 name: azure-tee-release
 
-on: workflow_dispatch
+on:
+  workflow_dispatch
+    inputs:
+      ref:
+        description: 'git branch'
+        required: false
+        default: 'dev'
+        type: string
+
 #on:
 #  release:
 #    types: [published]
@@ -27,13 +35,17 @@ jobs:
       - name: update caddyfile
         id: portbump
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          # RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ inputs.ref }}
+
         run: |
           NEXT_PORT=$(bash cd-scripts/tee/azure/updateproxy.sh 'cd-scripts/tee/azure/Caddyfile' $RELEASE_TAG)
           echo "newport=$NEXT_PORT" >> $GITHUB_OUTPUT
       - name: Commit and push updated Caddyfile
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+         # RELEASE_TAG: ${{ github.event.release.tag_name }}
+           RELEASE_TAG: ${{ inputs.ref }}
+
         run: |
           handler=$RELEASE_TAG
           if [ -z "${RELEASE_TAG}" ]; then
