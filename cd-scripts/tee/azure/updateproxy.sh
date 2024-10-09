@@ -69,5 +69,12 @@ else
     # Add the new handle_path block inside notary.codes block
     add_new_handle_path "$new_port" "$GIT_COMMIT_HASH"
     echo $new_port
+    # commit the changes
+    git config user.name github-actions
+    git config user.email github-actions@github.com
+    git add -A
+    git commit -m "azure tee reverse proxy => port:$NEXT_PORT/${RELEASE_TAG}"
+    git push
+    echo "deploy=new" >> $GITHUB_OUTPUT
     exit 0
 fi
