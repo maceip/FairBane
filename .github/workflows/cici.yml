@@ -1,4 +1,4 @@
-name: azure-tee-release
+name: cici
 
 on: workflow_dispatch
 #on:
