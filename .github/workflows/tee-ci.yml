@@ -1,13 +1,10 @@
-name: build-on-sgx
+name: tee-build
 
 on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: 'git branch'
-        required: false
-        default: 'dev'
-        type: string
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
     
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -27,9 +24,6 @@ jobs:
       steps:
         - name: get code
           uses: actions/checkout@v4
-          with:
-            repository: tlsnotary/tlsn
-            ref: notary-server-sgx
         - name: sccache
           if: github.event_name != 'release'
           # && github.event_name != 'workflow_dispatch'
@@ -44,22 +38,4 @@ jobs:
         - name: get emulated measurement (call gramine.sh without the sgx arg)
           working-directory: ${{ github.workspace }}/crates/notary/server/tee
           run: |
-           
-            run='gramine-direct  notary-server &'
-            curl https://sh.rustup.rs -sSf | sh -s -- -y
-            . "$HOME/.cargo/env"
-            apt install libssl-dev
-            gramine-sgx-gen-private-key
-            SGX=1 make
-            gramine-sgx-sign -m notary-server.manifest -o notary-server.sgx
-            mr_enclave=$(gramine-sgx-sigstruct-view --verbose --output-format=json notary-server.sig |jq .mr_enclave)
-            echo "mrenclave=$mr_enclave" >> "$GITHUB_OUTPUT"
-            echo "#### sgx mrenclave" | tee >> $GITHUB_STEP_SUMMARY
-            echo "\`\`\`${mr_enclave}\`\`\`" | tee >> $GITHUB_STEP_SUMMARY
-            eval "$run"
-            sleep 5
-            quote=$(curl 127.0.0.1:7047/info | jq .quote.rawQuote)
-            echo $quote
-            echo "quote=$quote" >> $GITHUB_OUTPUT
-            echo "#### 🔒 signed quote ${quote}" | tee >> $GITHUB_STEP_SUMMARY
-            echo "${quote}" | tee >> $GITHUB_STEP_SUMMARY
+             bash .github/scripts/gramine.sh
