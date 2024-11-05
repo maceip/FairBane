@@ -32,8 +32,7 @@ jobs:
       - name: update caddyfile
         id: portbump
         env:
-          # RELEASE_TAG: ${{ github.event.release.tag_name }}
-          RELEASE_TAG: ${{ inputs.ref }}
+          RELEASE_TAG: ${{ github.event.release.tag_name ||  inputs.ref }}
 
         run: |
           NEXT_PORT=$(bash cd-scripts/tee/azure/updateproxy.sh 'cd-scripts/tee/azure/Caddyfile' $RELEASE_TAG)
@@ -77,9 +76,6 @@ jobs:
       steps:
         - name: get code
           uses: actions/checkout@v4
-          with:
-            repository: tlsnotary/tlsn
-            ref: notary-server-sgx
         - name: sccache
           if: github.event_name != 'release'
           # && github.event_name != 'workflow_dispatch'
@@ -94,7 +90,7 @@ jobs:
           run: echo "${{needs.update-reverse-proxy.outputs.teeport}}" | tee >> $GITHUB_STEP_SUMMARY
 
         - name: get hardware measurement
-          working-directory: ${{ github.workspace }}/crates/notary/server/fixture/tee
+          working-directory: ${{ github.workspace }}/crates/notary/server/tee
           run: |
              bash .github/scripts/gramine.sh sgx
  
@@ -103,8 +99,6 @@ jobs:
       environment: tee
       runs-on: [self-hosted, linux]
       needs: [ build-measure, update-reverse-proxy ]
-       # outputs:
-       # result: ${{ steps.artifact.outputs.hash}}
       steps:
         - name: auth to registry
           uses: docker/login-action@v3
@@ -114,9 +108,6 @@ jobs:
             password: ${{ secrets.AZURE_CR_BUILDS_PW }}
         - name: get code
           uses: actions/checkout@v4
-          with:
-            repository: tlsnotary/tlsn
-            ref: quote-presentation
         - name: sccache
           if: github.event_name != 'release'
           # && github.event_name != 'workflow_dispatch'
@@ -133,9 +124,8 @@ jobs:
         - name: Build and push
           uses: docker/build-push-action@v6
           with:
-            context: ${{ github.workspace }}/crates/notary/server/fixture/tee
-            # testing:
-            push: ${{ github.actor == 'maceip' }}
+            context: ${{ github.workspace }}/crates/notary/server/tee
+            push: true
             tags: notaryserverbuilds.azurecr.io/prod/notary-sgx:${{ env.GIT_COMMIT_HASH }}
             labels: ${{needs.update-reverse-proxy.outputs.teeport}}
         - name: run
@@ -147,8 +137,6 @@ jobs:
       environment: tee
       runs-on: [self-hosted, linux]
       needs: [ build-measure, update-reverse-proxy ]
-       # outputs:
-       # result: ${{ steps.artifact.outputs.hash}}
       steps:
         - name: auth to registry
           uses: docker/login-action@v3
@@ -158,9 +146,6 @@ jobs:
             password: ${{ secrets.AZURE_CR_BUILDS_PW }}
         - name: get code
           uses: actions/checkout@v4
-          with:
-            repository: tlsnotary/tlsn
-            ref: quote-presentation
         - name: sccache
           if: github.event_name != 'release'
           # && github.event_name != 'workflow_dispatch'
@@ -177,9 +162,8 @@ jobs:
         - name: Build and push
           uses: docker/build-push-action@v6
           with:
-            context: ${{ github.workspace }}/crates/notary/server/fixture/tee
-            # testing:
-            push: ${{ github.actor == 'maceip' }}
+            context: ${{ github.workspace }}/crates/notary/server/tee
+            push: true
             tags: notaryserverbuilds.azurecr.io/prod/notary-sgx:${{ env.GIT_COMMIT_HASH }}
             labels: ${{needs.update-reverse-proxy.outputs.teeport}}
         - name: run
@@ -187,6 +171,3 @@ jobs:
             old=$($ docker ps --filter "name=${{needs.update-reverse-proxy.outputs.teeport}}")
             docker rm -f $old
             docker run --name ${{needs.update-reverse-proxy.outputs.teeport}} --device /dev/sgx_enclave --device /dev/sgx_provision --volume=/var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket -p  ${{needs.update-reverse-proxy.outputs.teeport}}:7047 notaryserverbuilds.azurecr.io/prod/notary-sgx:${{ env.GIT_COMMIT_HASH }} &
-      
-
-      
